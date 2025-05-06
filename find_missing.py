@@ -13,22 +13,6 @@ from src.name_matcher import NameMatcher
 # Load environment variables
 load_dotenv()
 
-# Global client for signal handling
-client = None
-loop = None
-
-# Signal handler to ensure clean shutdown
-def signal_handler(sig, frame):
-    print("\nInterrupt received, shutting down...")
-    if client and not client.is_closed():
-        if loop and loop.is_running():
-            loop.create_task(client.close())
-    sys.exit(0)
-
-# Register signal handlers
-signal.signal(signal.SIGINT, signal_handler)
-signal.signal(signal.SIGTERM, signal_handler)
-
 class AttendanceChecker(discord.Client):
     def __init__(self, csv_path=None, similarity_threshold=80, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -175,13 +159,12 @@ def print_usage():
     print("\nExample: python find_missing.py ./attendees.csv 75")
     print("\nIf csv_path is not provided, the script will use the path from the .env file.")
 
-async def main(csv_path=None, similarity_threshold=80):
+async def run_checker(csv_path=None, similarity_threshold=80):
     # Create intents
     intents = discord.Intents.default()
     intents.members = True
     
     # Create client
-    global client
     client = AttendanceChecker(
         csv_path=csv_path,
         similarity_threshold=similarity_threshold,
@@ -203,8 +186,6 @@ async def main(csv_path=None, similarity_threshold=80):
         print(f"ERROR: Failed to connect to Discord: {str(e)}")
 
 if __name__ == "__main__":
-    global loop
-    
     # Parse command line arguments
     csv_path = None
     similarity_threshold = 80
@@ -225,29 +206,10 @@ if __name__ == "__main__":
             print(f"ERROR: Invalid similarity threshold: {sys.argv[2]}. Must be an integer.")
             sys.exit(1)
     
-    # Set up the event loop
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    
+    # Set up and run the event loop
     try:
-        loop.run_until_complete(main(csv_path, similarity_threshold))
+        asyncio.run(run_checker(csv_path, similarity_threshold))
     except KeyboardInterrupt:
         print("\nInterrupt received, shutting down...")
-    finally:
-        # Clean up resources
-        try:
-            if client and not client.is_closed():
-                loop.run_until_complete(client.close())
-                
-            # Clean up remaining tasks
-            tasks = asyncio.all_tasks(loop)
-            if tasks:
-                for task in tasks:
-                    task.cancel()
-                loop.run_until_complete(asyncio.gather(*tasks, return_exceptions=True))
-            
-            # Close the loop
-            loop.run_until_complete(loop.shutdown_asyncgens())
-            loop.close()
-        except Exception as e:
-            print(f"Error during cleanup: {e}")
+    except Exception as e:
+        print(f"Error: {e}")
