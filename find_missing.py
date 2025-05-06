@@ -299,8 +299,13 @@ async def check_attendance(csv_path=None, similarity_threshold=80, use_group_mat
                             break
                     
                     print(f"\nGroup: {group} ({len(names)}/{total_in_group} missing)")
-                    for i, name in enumerate([a['name'] for a in names]):
-                        print(f"  {i+1}. {name}")
+                    # Check if names contains dictionaries or strings
+                    if names and isinstance(names[0], dict):
+                        for i, attendee in enumerate(names):
+                            print(f"  {i+1}. {attendee['name']}")
+                    else:
+                        for i, name in enumerate(names):
+                            print(f"  {i+1}. {name}")
             else:
                 # For NameMatcher, calculate group totals manually
                 group_totals = {}

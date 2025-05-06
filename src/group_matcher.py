@@ -399,7 +399,7 @@ class GroupMatcher:
                 group = attendee['group']
                 if group not in missing_by_group:
                     missing_by_group[group] = []
-                missing_by_group[group].append(attendee['name'])
+                missing_by_group[group].append(attendee)
         
         if self.debug:
             self._debug_print(f"Found {len(matches)} matches")
@@ -452,11 +452,13 @@ class GroupMatcher:
                     if group == attendee_group:
                         group_totals[group] = len(attendees)
             
-            for group, names in sorted(results['missing_by_group'].items()):
+            for group, attendees in sorted(results['missing_by_group'].items()):
                 total_in_group = group_totals.get(group, 0)
-                f.write(f"Group: {group} ({len(names)}/{total_in_group} missing)\n")
-                for i, name in enumerate(sorted(names)):
-                    f.write(f"  {i+1}. {name}\n")
+                f.write(f"Group: {group} ({len(attendees)}/{total_in_group} missing)\n")
+                # Sort attendees by name
+                sorted_attendees = sorted(attendees, key=lambda x: x['name'])
+                for i, attendee in enumerate(sorted_attendees):
+                    f.write(f"  {i+1}. {attendee['name']}\n")
                 f.write("\n")
         
         # Generate Excel report
