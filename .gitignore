@@ -31,3 +31,20 @@ build/
 # Excel temp files
 ~$*.xlsx
 **/.claude/settings.local.json
+
+# Data files and outputs
+*.csv
+*.xlsx
+*_attendees_*.txt
+discord_members*.txt
+discord_members*.csv
+matching_debug_*.txt
+edge_cases_*.txt
+name_patterns_*.txt
+attendance_report_*.xlsx
+missing_attendees_*.txt
+missing_attendees_*.xlsx
+
+# Exceptions
+!requirements.txt
+!sample_attendees.csv
