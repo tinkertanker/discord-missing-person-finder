@@ -1,6 +1,6 @@
-# Discord Attendance Checker
+# Discord Missing Person Finder
 
-A Discord bot for checking attendance in a hackathon by comparing Discord members against an attendee list.
+A tool for identifying registered attendees who are missing from your Discord server.
 
 ## Setup
 
@@ -14,92 +14,63 @@ A Discord bot for checking attendance in a hackathon by comparing Discord member
    ```
    pip install -r requirements.txt
    ```
-4. Copy `.env.example` to `.env` and fill in your Discord token and other configuration
-
-## Testing the Connection
-
-To verify your Discord bot token and environment are set up correctly:
-
-1. Edit the `.env` file and add your Discord bot token and Guild ID:
+4. Copy `.env.example` to `.env` and fill in your Discord token and server settings:
    ```
    DISCORD_TOKEN=your_actual_token_here
    GUILD_ID=your_server_id_here
-   ```
-
-2. Make sure your bot is added to your server with proper permissions:
-   - The bot needs "Server Members Intent" enabled in the Discord Developer Portal
-   - The bot needs permissions to read messages and view channels
-
-3. Run the test script:
-   ```
-   python -m src.test_connection
-   ```
-
-4. If successful, you should see output showing:
-   - Confirmation that the bot connected to Discord
-   - The name of your server
-   - How many members are in the server
-   - A sample list of the first few members
-
-## Attendance Checking Feature
-
-The bot can check which registered attendees are missing from your Discord server:
-
-### Setting Up the Attendance List
-
-1. Prepare a CSV file with your attendees list
-   - See `sample_attendees.csv` for the expected format
-   - The bot expects names in column 2 (index 1) and team/group info in column 12 (index 11)
-
-2. Set the path to your attendee list in the `.env` file:
-   ```
    ATTENDEE_LIST_PATH=./path/to/your/attendees.csv
    ```
 
-### Bot Commands
+## Using the Missing Person Finder
 
-- `!check_attendance [file_path] [threshold]` - Check which attendees are missing from Discord
-  - Generates a report of missing attendees organized by their groups
-  - Optionally provide a direct file path (overrides .env setting)
-  - Optionally specify a matching threshold (0-100, default: 80)
+The tool provides a simple way to identify registered attendees who are not in your Discord server:
 
-- `!export_missing [file_path] [threshold]` - Export missing attendees to an Excel file
-  - Creates an Excel file with missing attendees and their groups
-  - Same parameters as the `check_attendance` command
+1. Prepare your attendee list as a CSV file:
+   - Names should be in column 2 (index 1)
+   - Group/team info should be in column 12 (index 11)
+   - See `sample_attendees.csv` for an example format
 
-- `!help_attendance` - Show help information for attendance checking commands
+2. Run the script:
+   ```
+   python find_missing.py [csv_path] [similarity_threshold]
+   ```
+   
+   - `csv_path` (optional): Path to your attendee CSV file (overrides .env setting)
+   - `similarity_threshold` (optional): Matching threshold between 0-100 (default: 80)
 
-### Name Matching
+3. The script will:
+   - Connect to Discord using your bot token
+   - Read the attendee list from the CSV file
+   - Compare Discord member names with the attendee list
+   - Identify missing attendees
+   - Generate reports in both text and Excel formats
 
-The bot uses fuzzy string matching to account for slight differences between Discord usernames and real names:
+## Name Matching
+
+The tool uses fuzzy string matching to handle differences between Discord usernames and real names:
 
 - Discord username `john_doe` will match attendee name `John Doe`
 - Discord username `jane.smith` will match attendee name `Jane Smith`
-- Discord username `bobby.j` will match attendee name `Bob Johnson` (if threshold is appropriate)
+- Discord username `bobby.j` can match attendee name `Bob Johnson` (depending on threshold)
 
-Adjust the similarity threshold to control matching strictness:
+Adjusting the similarity threshold controls matching strictness:
 - Higher threshold (e.g., 90): More strict, may miss some valid matches
 - Lower threshold (e.g., 70): More lenient, may include some false matches
 
-## Running Tests
+## Testing Your Discord Connection
 
-Run the test suite to verify functionality:
-
-```
-python -m tests.run_tests
-```
-
-## Usage
-
-Run the bot:
+To verify your Discord bot token and environment are set up correctly:
 
 ```
-python -m src.bot
+python -m src.test_connection
 ```
+
+If successful, you should see output showing your bot connected to Discord, the name of your server, member count, and a sample of members.
 
 ## Features
 
-- Compare Discord server members against an attendee list
-- Fuzzy name matching to account for slight differences in names
-- Report on missing attendees
-- Export results to spreadsheet
+- Fast identification of missing attendees
+- Fuzzy name matching to handle Discord username variations
+- Group/team-based reporting
+- Export to both text and Excel formats
+- Adjustable matching threshold
