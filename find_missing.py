@@ -171,13 +171,6 @@ async def find_missing_attendees(csv_path=None, similarity_threshold=80):
         # Ensure everything is properly closed
         if not client.is_closed():
             await client.close()
-        
-        # Give the event loop time to close connections
-        pending = asyncio.all_tasks(asyncio.get_event_loop())
-        for task in pending:
-            if not task.done():
-                task.cancel()
-        await asyncio.gather(*pending, return_exceptions=True)
 
 def print_usage():
     print("Usage: python find_missing.py [csv_path] [similarity_threshold]")
@@ -207,5 +200,14 @@ if __name__ == "__main__":
             print(f"ERROR: Invalid similarity threshold: {sys.argv[2]}. Must be an integer.")
             sys.exit(1)
     
-    # Run the async function
-    asyncio.run(find_missing_attendees(csv_path, similarity_threshold))
+    # Set up the event loop with proper shutdown
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    
+    try:
+        # Run the async function
+        loop.run_until_complete(find_missing_attendees(csv_path, similarity_threshold))
+    finally:
+        # Clean up
+        loop.run_until_complete(loop.shutdown_asyncgens())
+        loop.close()
