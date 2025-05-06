@@ -163,10 +163,42 @@ async def export_discord_members():
             with open(debug_filename, 'w', encoding='utf-8') as f:
                 for member in sorted(members, key=lambda m: m.display_name.lower()):
                     # Format simplified for name matching debugging
-                    line = f"{member.id}|{member.display_name}|{member.name}|{member.nick or ''}\n"
+                    roles = [role.name for role in member.roles if role.name != "@everyone"]
+                    roles_str = ",".join(roles) if roles else ""
+                    
+                    # Try to extract cat-x-grp-y pattern from roles
+                    group_code = ""
+                    for role in roles:
+                        if role.startswith("cat-") and "-grp-" in role:
+                            group_code = role.split(",")[0].strip()
+                            break
+                    
+                    line = f"{member.id}|{member.display_name}|{member.name}|{member.nick or ''}|{group_code}|{roles_str}\n"
                     f.write(line)
             
             print(f"Simple debug list exported to {debug_filename}")
+            
+            # Export a specialized file just for group matching
+            group_filename = "discord_groups.csv"
+            with open(group_filename, 'w', encoding='utf-8') as f:
+                f.write("Discord ID,Display Name,Username,Nickname,Group Code,Has Participant Role\n")
+                for member in sorted(members, key=lambda m: m.display_name.lower()):
+                    # Extract group code
+                    group_code = ""
+                    has_participant = "No"
+                    
+                    for role in member.roles:
+                        if role.name != "@everyone":
+                            if role.name.startswith("cat-") and "-grp-" in role.name:
+                                group_code = role.name.split(",")[0].strip()
+                            if role.name == "participant":
+                                has_participant = "Yes"
+                    
+                    # Format for group matching
+                    f.write(f"{member.id},{member.display_name.replace(',', ' ')},{member.name.replace(',', ' ')},")
+                    f.write(f"{(member.nick or '').replace(',', ' ')},{group_code},{has_participant}\n")
+            
+            print(f"Group matching data exported to {group_filename}")
             
             # Close the client
             await client.close()
