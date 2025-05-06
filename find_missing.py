@@ -203,6 +203,8 @@ async def main(csv_path=None, similarity_threshold=80):
         print(f"ERROR: Failed to connect to Discord: {str(e)}")
 
 if __name__ == "__main__":
+    global loop
+    
     # Parse command line arguments
     csv_path = None
     similarity_threshold = 80
@@ -224,7 +226,6 @@ if __name__ == "__main__":
             sys.exit(1)
     
     # Set up the event loop
-    global loop
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     
