@@ -437,14 +437,24 @@ class GroupMatcher:
             f.write(f"Missing Attendees Report (Group-Based) - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             f.write(f"Total Discord Members: {results['total_discord']}\n")
             f.write(f"Total Attendees: {results['total_attendees']}\n")
-            f.write(f"Missing Attendees: {len(results['missing'])}\n\n")
+            f.write(f"Missing Attendees: {len(results['missing'])} out of {results['total_attendees']}\n\n")
             
             # Write missing attendees by group
             f.write("MISSING ATTENDEES BY GROUP:\n")
             f.write("-" * 40 + "\n\n")
             
+            # Calculate total group sizes for each group in missing_by_group
+            group_totals = {}
+            for group, _ in results['missing_by_group'].items():
+                # Count total attendees in this group
+                group_totals[group] = 0
+                for attendee_group, attendees in results['attendee_groups'].items():
+                    if group == attendee_group:
+                        group_totals[group] = len(attendees)
+            
             for group, names in sorted(results['missing_by_group'].items()):
-                f.write(f"Group: {group} ({len(names)} missing)\n")
+                total_in_group = group_totals.get(group, 0)
+                f.write(f"Group: {group} ({len(names)}/{total_in_group} missing)\n")
                 for i, name in enumerate(sorted(names)):
                     f.write(f"  {i+1}. {name}\n")
                 f.write("\n")

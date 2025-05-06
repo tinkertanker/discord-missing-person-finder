@@ -240,19 +240,28 @@ async def check_attendance(csv_path=None, similarity_threshold=80, use_group_mat
             # Save text report
             txt_filename = f"missing_attendees_{timestamp}.txt"
             
+            # Calculate group totals for the text report
+            group_totals = {}
+            for attendee in attendees:
+                group = attendee['group']
+                if group not in group_totals:
+                    group_totals[group] = 0
+                group_totals[group] += 1
+            
             with open(txt_filename, 'w', encoding='utf-8') as f:
                 # Write summary
                 f.write(f"Missing Attendees Report - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
                 f.write(f"Discord Guild ID: {guild_id}\n")
                 f.write(f"Total Discord Members: {len(member_names)}\n")
                 f.write(f"Total Attendees: {len(attendees)}\n")
-                f.write(f"Missing Attendees: {len(missing_attendees_names)}\n\n")
+                f.write(f"Missing Attendees: {len(missing_attendees_names)} out of {len(attendees)}\n\n")
                 
                 if not missing_attendees_names:
                     f.write("All attendees are present in Discord! Great job!")
                 else:
                     for group, names in sorted(missing_by_group.items()):
-                        f.write(f"Group: {group} ({len(names)} missing)\n")
+                        total_in_group = group_totals.get(group, 0)
+                        f.write(f"Group: {group} ({len(names)}/{total_in_group} missing)\n")
                         for i, name in enumerate(sorted(names)):
                             f.write(f"  {i+1}. {name}\n")
                         f.write("\n")
@@ -277,12 +286,35 @@ async def check_attendance(csv_path=None, similarity_threshold=80, use_group_mat
             report = "✅ All attendees are present in Discord! Great job!"
             print("\n" + report)
         else:
-            print(f"\n🔍 Missing Attendees Report ({len(missing_attendees_names)} missing):")
+            print(f"\n🔍 Missing Attendees Report ({len(missing_attendees_names)} out of {len(attendees)} missing):")
             
-            for group, names in sorted(missing_by_group.items()):
-                print(f"\nGroup: {group} ({len(names)} missing)")
-                for i, name in enumerate(sorted(names) if isinstance(names[0], str) else [a['name'] for a in names]):
-                    print(f"  {i+1}. {name}")
+            if use_group_matcher and 'attendee_groups' in results:
+                # For GroupMatcher, calculate group totals
+                for group, names in sorted(missing_by_group.items()):
+                    # Find total in group
+                    total_in_group = 0
+                    for group_name, attendees_list in results['attendee_groups'].items():
+                        if group == group_name:
+                            total_in_group = len(attendees_list)
+                            break
+                    
+                    print(f"\nGroup: {group} ({len(names)}/{total_in_group} missing)")
+                    for i, name in enumerate([a['name'] for a in names]):
+                        print(f"  {i+1}. {name}")
+            else:
+                # For NameMatcher, calculate group totals manually
+                group_totals = {}
+                for attendee in attendees:
+                    group = attendee['group']
+                    if group not in group_totals:
+                        group_totals[group] = 0
+                    group_totals[group] += 1
+                
+                for group, names in sorted(missing_by_group.items()):
+                    total_in_group = group_totals.get(group, 0)
+                    print(f"\nGroup: {group} ({len(names)}/{total_in_group} missing)")
+                    for i, name in enumerate(sorted(names)):
+                        print(f"  {i+1}. {name}")
         
         print(f"\nText report saved to: {txt_filename}")
         if 'excel_filename' in locals():
