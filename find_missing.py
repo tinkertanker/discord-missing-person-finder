@@ -167,6 +167,17 @@ async def find_missing_attendees(csv_path=None, similarity_threshold=80):
         print("ERROR: Invalid Discord token. Please check your DISCORD_TOKEN in the .env file.")
     except Exception as e:
         print(f"ERROR: Failed to connect to Discord: {str(e)}")
+    finally:
+        # Ensure everything is properly closed
+        if not client.is_closed():
+            await client.close()
+        
+        # Give the event loop time to close connections
+        pending = asyncio.all_tasks(asyncio.get_event_loop())
+        for task in pending:
+            if not task.done():
+                task.cancel()
+        await asyncio.gather(*pending, return_exceptions=True)
 
 def print_usage():
     print("Usage: python find_missing.py [csv_path] [similarity_threshold]")
