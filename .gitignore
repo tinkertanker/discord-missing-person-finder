@@ -30,3 +30,4 @@ build/
 
 # Excel temp files
 ~$*.xlsx
+**/.claude/settings.local.json
