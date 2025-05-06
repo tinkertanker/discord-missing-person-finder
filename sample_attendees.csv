@@ -1,0 +1,11 @@
+ID,Name,Email,Phone,Registration Date,Workshop,Status,Payment,Age,School,Year,Group
+1,John Doe,john.doe@example.com,12345678,2023-05-01,Python Workshop,Confirmed,Paid,16,High School A,Year 1,Team Alpha
+2,Jane Smith,jane.smith@example.com,12345679,2023-05-02,Python Workshop,Confirmed,Paid,17,High School A,Year 2,Team Alpha
+3,Bob Johnson,bob.johnson@example.com,12345680,2023-05-03,Python Workshop,Confirmed,Paid,16,High School B,Year 1,Team Beta
+4,Alice Brown,alice.brown@example.com,12345681,2023-05-04,Python Workshop,Confirmed,Paid,17,High School B,Year 2,Team Beta
+5,Michael Williams,michael.williams@example.com,12345682,2023-05-05,Python Workshop,Confirmed,Paid,16,High School C,Year 1,Team Gamma
+6,Sarah Jones,sarah.jones@example.com,12345683,2023-05-06,Python Workshop,Confirmed,Paid,17,High School C,Year 2,Team Gamma
+7,David Miller,david.miller@example.com,12345684,2023-05-07,Python Workshop,Confirmed,Paid,16,High School D,Year 1,Team Delta
+8,Emily Davis,emily.davis@example.com,12345685,2023-05-08,Python Workshop,Confirmed,Paid,17,High School D,Year 2,Team Delta
+9,James Wilson,james.wilson@example.com,12345686,2023-05-09,Python Workshop,Confirmed,Paid,16,High School E,Year 1,Team Epsilon
+10,Emma Taylor,emma.taylor@example.com,12345687,2023-05-10,Python Workshop,Confirmed,Paid,17,High School E,Year 2,Team Epsilon
