@@ -1,0 +1,21 @@
+Missing Attendees Report - 2025-05-06 19:30:45
+Discord Guild ID: 123456789012345678
+Total Discord Members: 496
+Total Attendees: 598
+Missing Attendees: 348 out of 598
+
+Group: cat-1-grp-1 (1/3 missing)
+  1. John Smith
+
+Group: cat-1-grp-2 (2/5 missing)
+  1. Jane Doe
+  2. Robert Johnson
+
+Group: cat-1-grp-3 (3/5 missing)
+  1. Lisa Brown
+  2. Michael Davis
+  3. William Wilson
+
+Group: cat-2-grp-1 (2/4 missing)
+  1. Sarah Taylor
+  2. James Martinez

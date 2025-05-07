@@ -16,17 +16,19 @@ def cleanup(dry_run=False):
     """
     # Define patterns for files to remove
     patterns = [
-        "discord_members_*.csv",
-        "discord_members_*.txt",
-        "discord_members.txt",
-        "edge_cases_*.txt",
-        "missing_attendees_*.txt",
-        "missing_attendees_*.xlsx",
-        "name_patterns_*.txt",
-        "matching_debug_*.txt",
-        "closest_matches.txt",
-        "processed_attendees.txt",
-        "processed_discord.txt",
+        "output/discord_members_*.csv",
+        "output/discord_members_*.txt",
+        "output/discord_members.txt",
+        "output/edge_cases_*.txt",
+        "output/missing_attendees_*.txt",
+        "output/missing_attendees_*.xlsx",
+        "output/missing_attendees_group_*.txt",
+        "output/missing_attendees_group_*.xlsx",
+        "output/name_patterns_*.txt",
+        "output/matching_debug_*.txt",
+        "output/closest_matches.txt",
+        "output/processed_attendees.txt",
+        "output/processed_discord.txt",
     ]
     
     # Find all files matching patterns

@@ -1,0 +1,29 @@
+Edge Cases Report - 2025-05-06 19:30:45
+Similarity Threshold: 80
+Matcher: GroupMatcher
+
+This report shows the structure of group codes and how they map between Discord roles (cat-x-grp-y) and attendee CSV column 12.
+
+Discord Group Codes (from roles):
+  cat-1-grp-1: 25 members
+  cat-1-grp-2: 18 members
+  cat-1-grp-3: 22 members
+  cat-2-grp-1: 15 members
+  cat-2-grp-2: 12 members
+  cat-2-grp-3: 19 members
+
+Attendee Group Codes (from CSV column 12):
+  cat-1-grp-1: 30 attendees
+  cat-1-grp-2: 28 attendees
+  cat-1-grp-3: 31 attendees
+  cat-2-grp-1: 25 attendees
+  cat-2-grp-2: 22 attendees
+  cat-2-grp-3: 29 attendees
+
+Group Mapping:
+  cat-1-grp-1 → cat-1-grp-1
+  cat-1-grp-2 → cat-1-grp-2
+  cat-1-grp-3 → cat-1-grp-3
+  cat-2-grp-1 → cat-2-grp-1
+  cat-2-grp-2 → cat-2-grp-2
+  cat-2-grp-3 → cat-2-grp-3

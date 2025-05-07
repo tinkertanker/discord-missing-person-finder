@@ -1,0 +1,9 @@
+# Example Discord Members File
+# Format: ID|DisplayName|Username|Nickname|GroupCode|Roles
+
+123456789012345678|John / Anderson|johnsmith|John / Anderson|cat-1-grp-1|cat-1-grp-1,participant
+234567890123456789|Mary / Williams|mary_will|Mary / Williams|cat-1-grp-2|cat-1-grp-2,participant
+345678901234567890|David / Lee|david.lee|David / Lee|cat-2-grp-3|cat-2-grp-3,participant
+456789012345678901|Patricia / Garcia|pgarcia|Patricia / Garcia|cat-1-grp-4|cat-1-grp-4,participant
+567890123456789012|Robert / Martinez|rmartinez|Robert / Martinez|cat-2-grp-1|cat-2-grp-1,participant
+678901234567890123|Jennifer / Rodriguez|jen.rodriguez|Jennifer / Rodriguez|cat-1-grp-2|cat-1-grp-1,cat-1-grp-2,participant

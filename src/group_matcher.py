@@ -430,8 +430,12 @@ class GroupMatcher:
         # Create timestamp for filenames
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         
+        # Ensure output directory exists
+        import os
+        os.makedirs("output", exist_ok=True)
+        
         # Generate text report
-        txt_filename = f"missing_attendees_group_{timestamp}.txt"
+        txt_filename = f"output/missing_attendees_group_{timestamp}.txt"
         with open(txt_filename, 'w', encoding='utf-8') as f:
             # Write summary
             f.write(f"Missing Attendees Report (Group-Based) - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
@@ -462,7 +466,7 @@ class GroupMatcher:
                 f.write("\n")
         
         # Generate Excel report
-        excel_filename = f"missing_attendees_group_{timestamp}.xlsx"
+        excel_filename = f"output/missing_attendees_group_{timestamp}.xlsx"
         
         # Create DataFrames
         missing_df = pd.DataFrame(results['missing'])
@@ -491,7 +495,7 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(description="Find missing attendees using group-based matching")
-    parser.add_argument("--discord", default="discord_members.txt", help="Path to Discord members file")
+    parser.add_argument("--discord", default="output/discord_members.txt", help="Path to Discord members file")
     parser.add_argument("--attendees", help="Path to attendees CSV file")
     parser.add_argument("--threshold", type=int, default=70, help="Name matching threshold (0-100)")
     parser.add_argument("--debug", action="store_true", help="Enable debug output")

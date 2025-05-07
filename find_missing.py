@@ -109,12 +109,15 @@ async def get_discord_members(guild_id, token):
                             member_text_rows.append(f"{user_id}|{display_name}|{username}|{display_name}|{group_code}|{','.join(role_names)}")
                             member_csv_rows.append([user_id, display_name, username, display_name, group_code, ",".join(role_names)])
                     
+                    # Ensure output directory exists
+                    os.makedirs("output", exist_ok=True)
+                    
                     # Save member data to files for debugging and further analysis
-                    with open(f"discord_members_{timestamp}.txt", 'w', encoding='utf-8') as f:
+                    with open(f"output/discord_members_{timestamp}.txt", 'w', encoding='utf-8') as f:
                         f.write("\n".join(member_text_rows))
                     
                     # Save as CSV too
-                    with open(f"discord_members_{timestamp}.csv", 'w', encoding='utf-8', newline='') as f:
+                    with open(f"output/discord_members_{timestamp}.csv", 'w', encoding='utf-8', newline='') as f:
                         writer = pd.DataFrame(member_csv_rows, columns=["ID", "DisplayName", "Username", "Nickname", "GroupCode", "Roles"])
                         writer.to_csv(f, index=False)
                     
@@ -173,8 +176,11 @@ async def check_attendance(csv_path=None, similarity_threshold=80, use_group_mat
         # Create timestamp for output files
         timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
         
+        # Ensure output directory exists
+        os.makedirs("output", exist_ok=True)
+        
         # Create discord_members.txt file for GroupMatcher
-        with open("discord_members.txt", "w", encoding="utf-8") as f:
+        with open("output/discord_members.txt", "w", encoding="utf-8") as f:
             for member in discord_members:
                 f.write(f"{member['id']}|{member['display_name']}|{member['username']}|{member['display_name']}|{member['group_code']}|{','.join(member['roles'])}\n")
         
@@ -185,7 +191,7 @@ async def check_attendance(csv_path=None, similarity_threshold=80, use_group_mat
             matcher = GroupMatcher(similarity_threshold=similarity_threshold, debug=True)
             
             # Find missing attendees using the GroupMatcher
-            results = matcher.find_missing_attendees("discord_members.txt", csv_path)
+            results = matcher.find_missing_attendees("output/discord_members.txt", csv_path)
             missing_attendees = results['missing']
             missing_by_group = results['missing_by_group']
             missing_attendees_names = [attendee['name'] for attendee in missing_attendees]
@@ -194,7 +200,7 @@ async def check_attendance(csv_path=None, similarity_threshold=80, use_group_mat
             txt_filename, excel_filename = matcher.generate_reports(results)
             
             # Generate additional debug reports
-            with open(f"name_patterns_{timestamp}.txt", "w", encoding="utf-8") as f:
+            with open(f"output/name_patterns_{timestamp}.txt", "w", encoding="utf-8") as f:
                 f.write("Group Codes in Discord Roles:\n")
                 group_codes = set()
                 for member in discord_members:
@@ -238,7 +244,7 @@ async def check_attendance(csv_path=None, similarity_threshold=80, use_group_mat
                 missing_by_group[group].append(name)
             
             # Save text report
-            txt_filename = f"missing_attendees_{timestamp}.txt"
+            txt_filename = f"output/missing_attendees_{timestamp}.txt"
             
             # Calculate group totals for the text report
             group_totals = {}
@@ -278,7 +284,7 @@ async def check_attendance(csv_path=None, similarity_threshold=80, use_group_mat
                         })
                 
                 df = pd.DataFrame(missing_data)
-                excel_filename = f"missing_attendees_{timestamp}.xlsx"
+                excel_filename = f"output/missing_attendees_{timestamp}.xlsx"
                 df.to_excel(excel_filename, index=False)
         
         # Generate console report
@@ -326,7 +332,7 @@ async def check_attendance(csv_path=None, similarity_threshold=80, use_group_mat
             print(f"Excel report saved to: {excel_filename}")
         
         # Create a file with edge cases and debug information
-        with open(f"edge_cases_{timestamp}.txt", "w", encoding="utf-8") as f:
+        with open(f"output/edge_cases_{timestamp}.txt", "w", encoding="utf-8") as f:
             f.write(f"Edge Cases Report - {datetime.datetime.now()}\n")
             f.write(f"Similarity Threshold: {similarity_threshold}\n")
             f.write(f"Matcher: {'GroupMatcher' if use_group_matcher else 'NameMatcher'}\n\n")
@@ -399,8 +405,11 @@ async def analyze_groups(csv_path=None):
         
         attendees = manager.get_attendees()
         
+        # Ensure output directory exists
+        os.makedirs("output", exist_ok=True)
+        
         # Create the discord_members.txt file for GroupMatcher
-        with open("discord_members.txt", "w", encoding="utf-8") as f:
+        with open("output/discord_members.txt", "w", encoding="utf-8") as f:
             for member in discord_members:
                 f.write(f"{member['id']}|{member['display_name']}|{member['username']}|{member['display_name']}|{member['group_code']}|{','.join(member['roles'])}\n")
         
@@ -433,7 +442,7 @@ async def analyze_groups(csv_path=None):
             print(f"  {group}: {count} attendees")
         
         # Load discord members and attendees in GroupMatcher
-        discord_members_data, discord_groups = matcher.load_discord_members("discord_members.txt")
+        discord_members_data, discord_groups = matcher.load_discord_members("output/discord_members.txt")
         attendee_data, attendee_groups = matcher.load_attendees(csv_path)
         
         # Map groups using GroupMatcher's algorithm
@@ -445,7 +454,7 @@ async def analyze_groups(csv_path=None):
         
         # Output to a file
         timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-        with open(f"matching_debug_{timestamp}.txt", "w", encoding="utf-8") as f:
+        with open(f"output/matching_debug_{timestamp}.txt", "w", encoding="utf-8") as f:
             f.write("Group Matching Analysis Report\n")
             f.write("=============================\n\n")
             
