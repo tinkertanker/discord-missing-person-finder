@@ -74,3 +74,14 @@ If successful, you should see output showing your bot connected to Discord, the 
 - Group/team-based reporting
 - Export to both text and Excel formats
 - Adjustable matching threshold
+
+## Cleaning Up Generated Files
+
+The script generates various output files with timestamps. To clean up these files:
+
+```
+python cleanup.py
+```
+
+Options:
+- `--dry-run`: Preview files that would be removed without actually deleting them
