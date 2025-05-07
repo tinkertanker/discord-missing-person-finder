@@ -166,9 +166,18 @@ class GroupMatcher:
             # Get the column names to find the right columns
             col_names = df.columns.tolist()
             
-            # Find the name and group columns
+            # Find the relevant columns
+            # Assume ID is in the first column (index 0)
+            id_col = df.iloc[:, 0] if len(df.columns) > 0 else None
+            
             # Assume name is in the second column (index 1)
             name_col = df.iloc[:, 1] if len(df.columns) > 1 else None
+            
+            # Assume email is in the third column (index 2)
+            email_col = df.iloc[:, 2] if len(df.columns) > 2 else None
+            
+            # Assume phone is in the fourth column (index 3)
+            phone_col = df.iloc[:, 3] if len(df.columns) > 3 else None
             
             # Assume group is in column 12 (index 11)
             group_col = df.iloc[:, 11] if len(df.columns) > 11 else None
@@ -181,7 +190,10 @@ class GroupMatcher:
             # Process each attendee
             for i, name in name_col.items():
                 if pd.notna(name) and isinstance(name, str) and name.strip():
-                    # Get group information
+                    # Extract attendee information
+                    attendee_record_id = str(id_col.iloc[i]) if id_col is not None and pd.notna(id_col.iloc[i]) else ""
+                    email = str(email_col.iloc[i]) if email_col is not None and pd.notna(email_col.iloc[i]) else ""
+                    phone = str(phone_col.iloc[i]) if phone_col is not None and pd.notna(phone_col.iloc[i]) else ""
                     group = ""
                     if group_col is not None and i < len(group_col):
                         if pd.notna(group_col.iloc[i]):
@@ -193,8 +205,11 @@ class GroupMatcher:
                     
                     # Store attendee details
                     attendees[attendee_id] = {
-                        'id': attendee_id,
+                        'attendee_id': attendee_id,
+                        'id': attendee_record_id,
                         'name': name.strip(),
+                        'email': email,
+                        'phone': phone,
                         'group': group,
                         'normalized_name': normalized_name,
                         'row_index': i
@@ -391,7 +406,10 @@ class GroupMatcher:
             if attendee_id not in matched_attendees:
                 missing.append({
                     'attendee_id': attendee_id,
+                    'id': attendee.get('id', ''),
                     'name': attendee['name'],
+                    'email': attendee.get('email', ''),
+                    'phone': attendee.get('phone', ''),
                     'group': attendee['group']
                 })
                 
@@ -468,8 +486,19 @@ class GroupMatcher:
         # Generate Excel report
         excel_filename = f"output/missing_attendees_group_{timestamp}.xlsx"
         
-        # Create DataFrames
-        missing_df = pd.DataFrame(results['missing'])
+        # Create DataFrames with selected columns for missing attendees
+        # Format the data to ensure we have all the fields we want
+        formatted_missing = []
+        for attendee in results['missing']:
+            formatted_missing.append({
+                'ID': attendee.get('id', ''),
+                'Name': attendee.get('name', ''),
+                'Email': attendee.get('email', ''),
+                'Phone': attendee.get('phone', ''),
+                'Group': attendee.get('group', '')
+            })
+        
+        missing_df = pd.DataFrame(formatted_missing)
         
         # Create Excel writer and save
         with pd.ExcelWriter(excel_filename) as writer:

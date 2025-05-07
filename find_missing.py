@@ -279,7 +279,10 @@ async def check_attendance(csv_path=None, similarity_threshold=80, use_group_mat
                     attendee = next((a for a in attendees if a['name'] == name), None)
                     if attendee:
                         missing_data.append({
+                            'ID': attendee.get('id', ''),
                             'Name': name,
+                            'Email': attendee.get('email', ''),
+                            'Phone': attendee.get('phone', ''),
                             'Group': attendee['group']
                         })
                 
